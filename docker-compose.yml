@@ -1,0 +1,29 @@
+version: '3'
+services:
+  databases:
+    image: "ecommdb"
+    ports:
+      - "5433:5432"
+    volumes:
+      - /Users/ayushshrestha/my_projects/ecomm-api-dock-ng/postgredb/ecomm_data:/var/lib/postgresql/data
+    environment:
+      FLASK_ENV: development
+  web:
+    image: "ecommapi"
+    command: bash /src/runserver.sh
+    ports:
+      - "5050:5050"
+    volumes:
+      - /Users/ayushshrestha/my_projects/ecomm-api-dock-ng/ecommAPI:/src
+    depends_on:
+      - databases
+  ui:
+    image: "ecommui"
+    command: sh /src/runserver.sh
+    ports:
+      - "5051:4200"
+    volumes:
+      - /Users/ayushshrestha/my_projects/ecomm-api-dock-ng/ecommUI:/src
+    depends_on:
+      - web
+
