@@ -3,6 +3,11 @@ node_modules
 bak-node_modules
 
 
+# postgres data
+ecomm_data/*
+postgredb/ecomm_data/*
+*/postgredb/ecomm_data/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -13,6 +18,7 @@ __pycache__/
 # C extensions
 *.so
 
+*.conf
 # Distribution / packaging
 .Python
 build/
@@ -37,6 +43,12 @@ MANIFEST
 *.png
 *.mp3
 *.mp4
+
+*.svg
+*.ttf
+*.eot
+*.woff
+*.woff2
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -119,5 +131,50 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# compiled output
+/dist
+/dist-server
+/tmp
+/out-tsc
+
+# dependencies
+/node_modules
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
+
 
 
