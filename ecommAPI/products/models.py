@@ -122,7 +122,7 @@ def image_upload_to(instance, filename):
 
 class VariationImage(models.Model):
     variation = models.ForeignKey(
-        Variation, related_name='variationimage', on_delete=models.CASCADE)
+        Variation, related_name='variationimages', on_delete=models.CASCADE)
     image = models.ImageField(upload_to=image_upload_to)
 
     def __str__(self):

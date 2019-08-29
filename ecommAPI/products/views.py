@@ -33,18 +33,16 @@ from django.views.decorators.csrf import csrf_exempt
 class ProductCreateAPIView(CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductCreateSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    permission_classes = [ IsAuthenticated, ]
+    authentication_classes = [ TokenAuthentication, ]
 
     def perform_create(self, serializer):
-        log.warning("here performing create action")
         serializer.save(user=self.request.user)
 
 
 # Product LIST API
 class ProductListAPIView(ListAPIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [AllowAny]
+    permission_classes = [ AllowAny, ]
     serializer_class = ProductListSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['title', 'content', 'user__first_name']
@@ -53,13 +51,13 @@ class ProductListAPIView(ListAPIView):
     def get_queryset(self, *args, **kwargs):
         #queryset_list = super(PostListAPIView, self).get_queryset(*args, **kwargs)
 
-        selfs_product = self.request.GET.get("selfs_product")
-        if not selfs_product:
-            queryset_list = Product.objects.all().exclude(
-                user=self.request.user)
-        else:
-            queryset_list = Product.objects.all().filter(user=self.request.user)
-
+        # selfs_product = self.request.GET.get("selfs_product")
+        # if not selfs_product:
+        #     queryset_list = Product.objects.all().exclude(
+        #         user=self.request.user)
+        # else:
+        #     queryset_list = Product.objects.all().filter(user=self.request.user)
+        queryset_list = Product.objects.all()
         query = self.request.GET.get("q")
         if query:
             queryset_list = queryset_list.filter(

@@ -1,6 +1,6 @@
 
 from rest_framework.serializers import (
-    HyperlinkedIdentityField, 
+    HyperlinkedIdentityField,
     SerializerMethodField,
     ModelSerializer
 )
@@ -11,7 +11,20 @@ from .models import Profile
 User = get_user_model()
 
 
+class ProfileSerializer(ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            'company',
+            'bio',
+            'location',
+            'phone'
+        ]
+
+
 class UserSerializer(ModelSerializer):
+    profile = ProfileSerializer()
+
     class Meta:
         model = User
         fields = [
@@ -19,19 +32,24 @@ class UserSerializer(ModelSerializer):
             'email',
             'first_name',
             'last_name',
+            'profile'
         ]
 
 
-class ProfileSerializer(ModelSerializer):
-    user = UserSerializer(read_only=True)
-
+class ProfileListSerializer(ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'company',
-            'bio',
-            'location',
-            'email',
-            'phone',
-            'user'
+            'company'
+        ]
+
+
+class UserListSerializer(ModelSerializer):
+    profile = ProfileListSerializer()
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'profile'
         ]

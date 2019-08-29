@@ -8,7 +8,8 @@ from rest_framework.serializers import (
 
 from django.contrib.auth import get_user_model
 from .models import Product, Variation, VariationImage
-from users.serializers import ProfileSerializer
+from users.serializers import (
+    ProfileSerializer, UserSerializer, UserListSerializer)
 
 User = get_user_model()
 
@@ -26,14 +27,10 @@ class VariationImageSerializer(ModelSerializer):
         except:
             image = None
         return image
-    
-    def get_name(self, obj):
-        return "Snoie shrestha"
 
 
 class VariationSerializer(ModelSerializer):
-    images = VariationImageSerializer(many=True, required=False)
-
+    variationimages = VariationImageSerializer(many=True, required=False)
     class Meta:
         model = Variation
         fields = [
@@ -42,7 +39,7 @@ class VariationSerializer(ModelSerializer):
             'price',
             'sale_price',
             'available',
-            'images'
+            'variationimages'
         ]
 
 # Product CREATE/UPDATE serializer
@@ -110,24 +107,24 @@ class ProductCreateSerializer(ModelSerializer):
 
 
 class ProductListSerializer(ModelSerializer):
-    variations = VariationSerializer(many=True)
-    user = ProfileSerializer()
+    variations = VariationSerializer(many=True, required=False)
+    user = UserListSerializer()
 
     class Meta:
         model = Product
         fields = [
             'pk',
             'title',
-            'user',
             'tags',
-            'variations'
+            'variations',
+            'user',
         ]
 
 
 # Product DETAIL serializer
 class ProductDetailSerializer(ModelSerializer):
     variations = VariationSerializer(many=True, required=False)
-    user = ProfileSerializer()
+    user = UserSerializer()
 
     class Meta:
         model = Product

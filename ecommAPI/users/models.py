@@ -11,7 +11,6 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     company = models.CharField(max_length=30, blank=True)
     location = models.CharField(max_length=50, blank=True)
-    email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
