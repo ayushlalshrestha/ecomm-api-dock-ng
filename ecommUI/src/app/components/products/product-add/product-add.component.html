@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>
+   <div *ngIf="editAction; else addProduct">Edit Product</div>
+   <ng-template #addProduct>Add Product</ng-template>
+</h1>
+
+<div mat-dialog-content>
+   <div>
+      <form materialize novalidate [formGroup]="productForm" class="example-container">
+
+         <mat-form-field>
+            <mat-label>Title</mat-label>
+            <input matInput type="text" name="title" placeholder="Title for the Product"
+            formControlName="title" autocomplete="off" minlength=5 required>
+         </mat-form-field>
+
+         <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea matInput type="text" name="content" placeholder="Description of the product ... .."
+             formControlName="content" autocomplete="off" minlength=10 required> </textarea>
+         </mat-form-field>
+
+         <tag-chips-component 
+            (tagSelect)="addTags($event)"
+            [parentForm]="productForm"
+            [tags] = "tags"
+            > </tag-chips-component>
+
+         <!-- <div class="file-field input-field">
+            <div class="btn btn-small pink darken-1">
+               <span> Browse</span>
+               <input type="file" (change)="onImageChanged($event)" #imageInput />
+            </div>
+
+            <div class="file-path-wrapper">
+               <input class="file-path validate" type="text" placeholder="Upload Product image" />
+            </div>
+         </div> -->
+      </form>
+   </div>
+
+</div>
+
+<div mat-dialog-actions>
+   <button mat-button [mat-dialog-close]="" class="btn btn-small indigo lighten-5 footer-button">Cancel</button>
+   <button mat-button (click)="onSubmit()" [disabled]="!productForm.valid" class="btn btn-small blue right submit-button">Submit</button>
+</div>

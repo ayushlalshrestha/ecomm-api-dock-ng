@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-from .models import Profile
+from .models import Profile, User
 
 from rest_framework.filters import (SearchFilter, OrderingFilter, )
 from rest_framework.views import APIView
@@ -19,20 +19,20 @@ from rest_framework.permissions import (AllowAny, IsAuthenticated, IsAdminUser,
                                         IsAuthenticatedOrReadOnly, )
 
 # from .pagination import PostLimitOffsetPagination, PostPageNumberPagination
-from .serializers import ProfileSerializer
+from .serializers import ProfileSerializer, UserSerializer
 
 
 # LISTS API
 class ProfileListAPIView(ListAPIView):
-    serializer_class = ProfileSerializer
+    serializer_class = UserSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     # permission_classes = [IsAdminUser]
-    search_fields = ['bio', 'location', 'user__first_name',
-                     'user__username', 'user__last_name']
+    search_fields = ['username', 'first_name',
+                     'profile__bio', 'profile__location', 'profile__company']
     # pagination_class = PostPageNumberPagination #PageNumberPagination
 
     def get_queryset(self, *args, **kwargs):
-        queryset_list = Profile.objects.all()  # filter(user=self.request.user)
+        queryset_list = User.objects.all()  # filter(user=self.request.user)
         query = self.request.GET.get("q")
         if query:
             queryset_list = queryset_list.filter(
@@ -46,7 +46,7 @@ class ProfileListAPIView(ListAPIView):
             ).distinct()
         return queryset_list
 
-# - - - - Deprecated - - - - - 
+# - - - - Deprecated - - - - -
 def session_details(request):
     """
     Deprecated: Old session details

@@ -1,0 +1,29 @@
+<div mat-dialog-title>
+  <h4>{{product.title}}</h4>
+  <div class="chip" *ngFor="let tag of product.tags">
+    {{tag}}
+  </div>
+</div>
+<div mat-dialog-content>
+
+  <div class="row" style="color: #6f6f6f">
+    <div> by {{ product.user.username }} at {{product.user.profile.company}} </div> &nbsp;
+    <div *ngIf="product && product.variations && product.variations[0].price != null">
+      <div> - {{product.variations[0].price}}  <i class="fa fa-dollar" aria-hidden="true"></i> </div>
+    </div>
+  </div>
+
+  <div *ngIf="product && product.variations && product.variations[0].variationimages != null">
+    <img class="responsive-img product-title-image" src={{product.variations[0].variationimages[0].image}}>
+  </div>
+
+  <div class="row product-description" style="margin-top: 10px;">
+    <div>
+      {{ product.description }}
+    </div>
+  </div>
+  
+</div>
+<div mat-dialog-actions>
+  <button mat-button [mat-dialog-close]="product.pk">Done</button>
+</div>

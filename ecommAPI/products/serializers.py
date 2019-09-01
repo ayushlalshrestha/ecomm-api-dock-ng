@@ -18,6 +18,7 @@ class VariationImageSerializer(ModelSerializer):
     class Meta:
         model = VariationImage
         fields = [
+            'pk',
             'image'
         ]
 
@@ -34,6 +35,7 @@ class VariationSerializer(ModelSerializer):
     class Meta:
         model = Variation
         fields = [
+            'pk',
             'title',
             'description',
             'price',
@@ -115,6 +117,7 @@ class ProductListSerializer(ModelSerializer):
         fields = [
             'pk',
             'title',
+            'description',
             'tags',
             'variations',
             'user',

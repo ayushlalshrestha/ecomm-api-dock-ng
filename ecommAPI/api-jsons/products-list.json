@@ -1,0 +1,78 @@
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "pk": 1,
+            "title": "Sony LED X8000E",
+            "tags": [
+                "tv",
+                "electronics"
+            ],
+            "variations": [
+                {
+                    "title": "65 inch sony",
+                    "description": "65inch X8000E 19 edition",
+                    "price": "2500.00",
+                    "sale_price": null,
+                    "available": true,
+                    "variationimages": [
+                        {
+                            "image": "http://localhost:5050/media/products/1/65-inch-sony-None.jpg"
+                        }
+                    ]
+                },
+                {
+                    "title": "55 inch sony",
+                    "description": "55inch X8000E 19 edition",
+                    "price": "2000.00",
+                    "sale_price": null,
+                    "available": true,
+                    "variationimages": [
+                        {
+                            "image": "http://localhost:5050/media/products/1/55-inch-sony-None.jpg"
+                        }
+                    ]
+                }
+            ],
+            "user": {
+                "username": "ayush",
+                "profile": {
+                    "company": "LogPoint Developments"
+                }
+            }
+        },
+        {
+            "pk": 2,
+            "title": "Samsung LED AE2500",
+            "tags": [
+                "tv",
+                "electronics"
+            ],
+            "variations": [
+                {
+                    "title": "55 inch samsung",
+                    "description": "55inch X8000E 19 edition",
+                    "price": "2000.00",
+                    "sale_price": null,
+                    "available": true,
+                    "variationimages": [
+                        {
+                            "image": "http://localhost:5050/media/products/2/55-inch-samsung-None.jpg"
+                        },
+                        {
+                            "image": "http://localhost:5050/media/products/2/55-inch-samsung-None_q2w5yh5.jpg"
+                        }
+                    ]
+                }
+            ],
+            "user": {
+                "username": "ayush",
+                "profile": {
+                    "company": "LogPoint Developments"
+                }
+            }
+        }
+    ]
+}

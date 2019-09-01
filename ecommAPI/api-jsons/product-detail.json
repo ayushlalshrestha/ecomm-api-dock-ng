@@ -1,0 +1,48 @@
+{
+    "pk": 1,
+    "title": "Sony LED X8000E",
+    "description": "The All new SONY LED TV for 2019, Super HD",
+    "slug": "sony-led-x8000e",
+    "tags": [
+        "tv",
+        "electronics"
+    ],
+    "user": {
+        "username": "ayush",
+        "email": "ayush.lal.shrestha@hotmail.com",
+        "first_name": "Ayush",
+        "last_name": "Shrestha",
+        "profile": {
+            "company": "LogPoint Developments",
+            "bio": "Hello, This is Mr.Ayush Lal Shrestha, the 1st site admin for development of the sight!\r\nQuery me at my email for queries, thanks.",
+            "location": "Sanepa, Lalitpur",
+            "phone": "+9779849935051"
+        }
+    },
+    "variations": [
+        {
+            "title": "65 inch sony",
+            "description": "65inch X8000E 19 edition",
+            "price": "2500.00",
+            "sale_price": null,
+            "available": true,
+            "variationimages": [
+                {
+                    "image": "http://localhost:5050/media/products/1/65-inch-sony-None.jpg"
+                }
+            ]
+        },
+        {
+            "title": "55 inch sony",
+            "description": "55inch X8000E 19 edition",
+            "price": "2000.00",
+            "sale_price": null,
+            "available": true,
+            "variationimages": [
+                {
+                    "image": "http://localhost:5050/media/products/1/55-inch-sony-None.jpg"
+                }
+            ]
+        }
+    ]
+}
