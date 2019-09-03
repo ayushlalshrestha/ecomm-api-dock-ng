@@ -21,7 +21,6 @@ export class ProductDetailComponent implements OnInit {
      }
 
   ngOnInit() {
-    alert(this.data.productPK);
     this.dataService.getProductDetails(this.data.productPK).subscribe(
       product => {
         this.dataService.productSelected.emit(product);

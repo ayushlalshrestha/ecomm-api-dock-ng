@@ -13,8 +13,9 @@
     </div>
   </div>
 
-  <div *ngIf="product && product.variations && product.variations[0].variationimages != null">
-    <img class="responsive-img product-title-image" src={{product.variations[0].variationimages[0].image}}>
+  <div *ngIf="product && product.variations && product.variations[0].variationimages != []">
+    <img class="materialboxed" width='700' src={{product.variations[0].variationimages[0].image}}>
+    <!-- <img class="responsive-img product-title-image" src={{product.variations[0].variationimages[0].image}}> -->
   </div>
 
   <div class="row product-description" style="margin-top: 10px;">

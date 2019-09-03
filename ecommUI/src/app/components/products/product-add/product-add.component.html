@@ -6,24 +6,20 @@
 <div mat-dialog-content>
    <div>
       <form materialize novalidate [formGroup]="productForm" class="example-container">
-
          <mat-form-field>
             <mat-label>Title</mat-label>
-            <input matInput type="text" name="title" placeholder="Title for the Product"
-            formControlName="title" autocomplete="off" minlength=5 required>
+            <input matInput type="text" name="title" placeholder="Title for the Product" formControlName="title"
+               autocomplete="off" minlength=5 required>
          </mat-form-field>
 
          <mat-form-field>
             <mat-label>Description</mat-label>
-            <textarea matInput type="text" name="content" placeholder="Description of the product ... .."
-             formControlName="content" autocomplete="off" minlength=10 required> </textarea>
+            <textarea matInput type="text" name="description" placeholder="Description of the product ... .."
+               formControlName="description" autocomplete="off" minlength=10 required> </textarea>
          </mat-form-field>
 
-         <tag-chips-component 
-            (tagSelect)="addTags($event)"
-            [parentForm]="productForm"
-            [tags] = "tags"
-            > </tag-chips-component>
+         <tag-chips-component (tagSelect)="addTags($event)" [parentForm]="productForm" [tags]="tags">
+         </tag-chips-component>
 
          <!-- <div class="file-field input-field">
             <div class="btn btn-small pink darken-1">
@@ -38,9 +34,53 @@
       </form>
    </div>
 
+   <!-- Variations form -->
+   <br>
+   <div (click)="addVariationToFormArray()" class="btn">
+      <span><i class="fa fa-plus plus-icon"></i></span>
+      <span class="emp-title">Add Product Variation</span>
+   </div>
+
+   <form [formGroup]="variationsForm">
+      <div class="row pad-leftright">
+         <div>
+            <table class="table">
+               <thead class="theader">
+                  <tr>
+                     <th *ngFor="let x of variationFields">{{x.name}}</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr *ngFor="let row of variationRows.controls; let ind = index;">
+                     <td formArrayName="variations" *ngFor="let field of variationFields">
+                        <div [formGroupName]="ind">
+                           <div>
+                              <div class="form-group">
+                                 <div *ngIf="field.formControl != 'images'; else fileInput">
+                                    <input [type]="field.type" class="form-control" [placeholder]="field.name"
+                                       [formControlName]="field.formControl" />
+                                 </div>
+
+                                 <ng-template #fileInput>
+                                    <input [type]="field.type" class="form-control" (change)="onImageChanged($event, ind)"
+                                       [placeholder]="field.name" [formControlName]="field.formControl" multiple />
+                                 </ng-template>
+                                 
+                              </div>
+                           </div>
+                        </div>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </form>
+   <!-- variations form -->
 </div>
 
 <div mat-dialog-actions>
    <button mat-button [mat-dialog-close]="" class="btn btn-small indigo lighten-5 footer-button">Cancel</button>
-   <button mat-button (click)="onSubmit()" [disabled]="!productForm.valid" class="btn btn-small blue right submit-button">Submit</button>
+   <button mat-button (click)="onSubmit()" [disabled]="!productForm.valid"
+      class="btn btn-small blue right submit-button">Submit</button>
 </div>
