@@ -45,7 +45,6 @@ export class ProductAddComponent implements OnInit {
   editAction: boolean;
   productPK: any;
 
-  // selectedImage: File;
   productForm = new FormGroup({
     title: new FormControl(''),
     description: new FormControl(''),
@@ -96,7 +95,6 @@ export class ProductAddComponent implements OnInit {
       variations: productVariation
     };
     console.log(data);
-    return
     if (!this.editAction) {
       this.dataService.newProduct(data).subscribe(
         res => {
@@ -129,6 +127,12 @@ export class ProductAddComponent implements OnInit {
   addVariationToFormArray() {
     this.variationRows.push(this.addVariationDetails());
   }
+  removeVariation(event, index){
+    if (this.variationRows.value.length == 1) {
+      return
+    }
+    this.variationRows.removeAt(index);
+  }
   get variationRows() {
     return (<FormArray>this.variationsForm.get('variations'));
   }
@@ -136,14 +140,16 @@ export class ProductAddComponent implements OnInit {
     this.dialogRef.close();
   }
   onImageChanged(event, index) {
-    const files = event.target.files;
-    // if (file.size / (1024 * 1024) > 3) {
-    //   this.dataService.openSnackBar("Image larger than 3 MB");
-    //   return;
-    // }
+    var files = event.target.files;
+    // files.forEach(file => {
+    //   if (file.size / (1024 * 1024) > 3) {
+    //     this.dataService.openSnackBar("Image "+ file.name + " larger than 3 MB");
+    //     return;
+    //   }
+    // });
     this.variationRows.value[index].images = files;
     console.log(this.variationRows.value[index]);
-    
+
   }
   createImageFromBlob(image: Blob) {
     let reader = new FileReader();

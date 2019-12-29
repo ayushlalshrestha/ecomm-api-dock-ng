@@ -1,15 +1,17 @@
-
 import logging as log
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
-    ModelSerializer
+    ModelSerializer,
 )
 
 from django.contrib.auth import get_user_model
 from .models import Product, Variation, VariationImage
 from users.serializers import (
-    ProfileSerializer, UserSerializer, UserListSerializer)
+    ProfileSerializer,
+    UserSerializer,
+    UserListSerializer,
+)
 
 User = get_user_model()
 
@@ -17,10 +19,7 @@ User = get_user_model()
 class VariationImageSerializer(ModelSerializer):
     class Meta:
         model = VariationImage
-        fields = [
-            'pk',
-            'image'
-        ]
+        fields = ["pk", "image"]
 
     def get_image(self, obj):
         try:
@@ -32,17 +31,19 @@ class VariationImageSerializer(ModelSerializer):
 
 class VariationSerializer(ModelSerializer):
     variationimages = VariationImageSerializer(many=True, required=False)
+
     class Meta:
         model = Variation
         fields = [
-            'pk',
-            'title',
-            'description',
-            'price',
-            'sale_price',
-            'available',
-            'variationimages'
+            "pk",
+            "title",
+            "description",
+            "price",
+            "sale_price",
+            "available",
+            "variationimages",
         ]
+
 
 # Product CREATE/UPDATE serializer
 class ProductCreateSerializer(ModelSerializer):
@@ -50,13 +51,7 @@ class ProductCreateSerializer(ModelSerializer):
 
     class Meta:
         model = Product
-        fields = [
-            'title',
-            'description',
-            'tags',
-            'publish',
-            'variations'
-        ]
+        fields = ["title", "description", "tags", "publish", "variations"]
 
     # def to_internal_value(self, data):
     #     ret = super().to_internal_value(data)
@@ -66,15 +61,19 @@ class ProductCreateSerializer(ModelSerializer):
     #     return ret
 
     def create(self, validated_data):
-        variations_data = validated_data.pop('variations')
+        variations_data = validated_data.pop("variations")
         product = Product.objects.create(**validated_data)
+        log.warning("Create method - product")
+        log.warning(validated_data)
+        log.warning(variations_data)
         for variation_data in variations_data:
-            images_data = variation_data.pop('images', [])
+            images_data = variation_data.pop("images", [])
+            log.warning(f"Create - images_data is as : {images_data}")
             variation = Variation.objects.create(
-                product=product, **variation_data)
-            for image_data in images_data:
-                VariationImage.objects.create(
-                    variation=variation, **image_data)
+                product=product, **variation_data
+            )
+            for image in images_data:
+                VariationImage.objects.create(variation=variation, image=image)
 
         return product
 
@@ -114,14 +113,7 @@ class ProductListSerializer(ModelSerializer):
 
     class Meta:
         model = Product
-        fields = [
-            'pk',
-            'title',
-            'description',
-            'tags',
-            'variations',
-            'user',
-        ]
+        fields = ["pk", "title", "description", "tags", "variations", "user"]
 
 
 # Product DETAIL serializer
@@ -132,13 +124,13 @@ class ProductDetailSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'pk',
-            'title',
-            'description',
-            'slug',
-            'tags',
-            'user',
-            'variations'
+            "pk",
+            "title",
+            "description",
+            "slug",
+            "tags",
+            "user",
+            "variations",
         ]
 
     # def get_html(self, obj):

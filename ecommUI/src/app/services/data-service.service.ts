@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material';
 import { Product } from '../models/product.models';
 import { User } from '../models/user-profile.models';
 import { Observable } from 'rxjs';
-import { ResponseContentType } from '@angular/http';
+import { ResponseContentType, RequestOptions } from '@angular/http';
 import { ProductListData, getProductData } from '../models/products.interfaces';
 
 @Injectable()
@@ -32,18 +32,25 @@ export class DataService {
 
   }
   newProduct(data) {
-    const newProduct = new FormData();
-    newProduct.append('title', data.title);
-    newProduct.append('description', data.content);
-    newProduct.append('tags', data.tags);
-
-    if (data.image && data.image.name) {
-      newProduct.append('image', data.image, data.image.name);
-    }
-
-    return this.http.post(this.baseURL + '/products/create/', newProduct, {
-      withCredentials: true
+    var headers = new HttpHeaders();
+    headers.append('Content-Type', 'application/json');
+    return this.http.post(this.baseURL + '/products/create/', data, {
+      withCredentials: true,
+      headers: headers
     });
+
+    // const newProduct = new FormData();
+    // newProduct.append('title', data.title);
+    // newProduct.append('description', data.content);
+    // newProduct.append('tags', data.tags);
+
+    // if (data.image && data.image.name) {
+    //   newProduct.append('image', data.image, data.image.name);
+    // }
+
+    // return this.http.post(this.baseURL + '/products/create/', newProduct, {
+    //   withCredentials: true
+    // });
   }
   editProduct(data: any = null, extract = true) {
     const productID = data.productPK;

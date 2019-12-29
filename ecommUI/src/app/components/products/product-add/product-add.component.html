@@ -20,63 +20,50 @@
 
          <tag-chips-component (tagSelect)="addTags($event)" [parentForm]="productForm" [tags]="tags">
          </tag-chips-component>
-
-         <!-- <div class="file-field input-field">
-            <div class="btn btn-small pink darken-1">
-               <span> Browse</span>
-               <input type="file" (change)="onImageChanged($event)" #imageInput />
-            </div>
-
-            <div class="file-path-wrapper">
-               <input class="file-path validate" type="text" placeholder="Upload Product image" />
-            </div>
-         </div> -->
       </form>
    </div>
 
-   <!-- Variations form -->
    <br>
-   <div (click)="addVariationToFormArray()" class="btn">
+   <div (click)="addVariationToFormArray()" class="btn btn-small green">
       <span><i class="fa fa-plus plus-icon"></i></span>
       <span class="emp-title">Add Product Variation</span>
    </div>
+   <br>
 
+   <!-- Variations form -->
    <form [formGroup]="variationsForm">
-      <div class="row pad-leftright">
+      <div class="pad-leftright">
          <div>
-            <table class="table">
-               <thead class="theader">
-                  <tr>
-                     <th *ngFor="let x of variationFields">{{x.name}}</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr *ngFor="let row of variationRows.controls; let ind = index;">
-                     <td formArrayName="variations" *ngFor="let field of variationFields">
-                        <div [formGroupName]="ind">
-                           <div>
-                              <div class="form-group">
-                                 <div *ngIf="field.formControl != 'images'; else fileInput">
-                                    <input [type]="field.type" class="form-control" [placeholder]="field.name"
-                                       [formControlName]="field.formControl" />
-                                 </div>
-
-                                 <ng-template #fileInput>
-                                    <input [type]="field.type" class="form-control" (change)="onImageChanged($event, ind)"
-                                       [placeholder]="field.name" [formControlName]="field.formControl" multiple />
-                                 </ng-template>
-                                 
-                              </div>
+            <tr *ngFor="let row of variationRows.controls; let ind = index;">
+               <td formArrayName="variations" *ngFor="let field of variationFields">
+                  <div [formGroupName]="ind">
+                     <div>
+                        <div class="form-group">
+                           <div *ngIf="field.formControl != 'images'; else fileInput">
+                              <input [type]="field.type" class="form-control" [placeholder]="field.name"
+                                 [formControlName]="field.formControl" />
                            </div>
+
+                           <ng-template #fileInput>
+                              <input [type]="field.type" class="form-control" (change)="onImageChanged($event, ind)"
+                                 [placeholder]="field.name" [formControlName]="field.formControl" multiple />
+                           </ng-template>
+
                         </div>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
+                     </div>
+                  </div>
+               </td>
+               <td>
+                  <a class="form-control btn btn-floating btn-small waves-effect waves-light red darken-2 "
+                     (click)="removeVariation($event, ind)">
+                        <i class=" material-icons">remove</i>
+                  </a>
+               </td>
+            </tr>
          </div>
       </div>
    </form>
-   <!-- variations form -->
+
 </div>
 
 <div mat-dialog-actions>
@@ -84,3 +71,16 @@
    <button mat-button (click)="onSubmit()" [disabled]="!productForm.valid"
       class="btn btn-small blue right submit-button">Submit</button>
 </div>
+
+
+
+<!-- <div class="file-field input-field">
+      <div class="btn btn-small pink darken-1">
+         <span> Browse</span>
+         <input type="file" (change)="onImageChanged($event)" #imageInput />
+      </div>
+   
+      <div class="file-path-wrapper">
+         <input class="file-path validate" type="text" placeholder="Upload Product image" />
+      </div>
+   </div> -->

@@ -1,0 +1,36 @@
+<div class="form-group">
+	<div class="row pad-leftright">
+		<div class="col-md-12">
+			<div (click)="addEmployerToFormArray()">
+				<span><i class="fa fa-plus plus-icon"></i></span>
+        <span class="emp-title">Add Product Variation</span>
+      </div>
+    </div>
+  </div>
+  <form [formGroup]="variationsForm">
+    <div class="row pad-leftright">
+      <div>
+        <table class="table ft-table simple-table table-equal-columns" border="1">
+          <thead class="theader">
+            <tr>
+              <th *ngFor="let x of variationFields">{{x.name}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of employeeRows.controls; let ind = index;">
+              <td formArrayName="employees" *ngFor="let field of variationFields">
+                <div [formGroupName]="ind">
+                  <div>
+                    <div class="form-group">
+                      <input [type]="field.type" class="form-control" id="example-input-3" [placeholder]="field.name" [formControlName]="field.formControl" />
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>
