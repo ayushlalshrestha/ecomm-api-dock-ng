@@ -26,6 +26,8 @@ from users.jwtauthenticator import TokenAuthentication
 
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from rest_framework import request
 
 
 # Product CREATE API
@@ -33,8 +35,8 @@ from django.views.decorators.csrf import csrf_exempt
 class ProductCreateAPIView(CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductCreateSerializer
-    permission_classes = [ IsAuthenticated, ]
-    authentication_classes = [ TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    authentication_classes = [TokenAuthentication, ]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -42,22 +44,23 @@ class ProductCreateAPIView(CreateAPIView):
 
 # Product LIST API
 class ProductListAPIView(ListAPIView):
-    permission_classes = [ AllowAny, ]
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [AllowAny, ]
     serializer_class = ProductListSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['title', 'content', 'user__first_name']
     pagination_class = ProductPageNumberPagination  # PageNumberPagination
 
     def get_queryset(self, *args, **kwargs):
-        #queryset_list = super(PostListAPIView, self).get_queryset(*args, **kwargs)
-
-        # selfs_product = self.request.GET.get("selfs_product")
-        # if not selfs_product:
-        #     queryset_list = Product.objects.all().exclude(
-        #         user=self.request.user)
-        # else:
-        #     queryset_list = Product.objects.all().filter(user=self.request.user)
+        # queryset_list = super(PostListAPIView, self).get_queryset(*args, **kwargs)
         queryset_list = Product.objects.all()
+        if self.request.user.is_authenticated:
+            selfs_product = self.request.GET.get("session_users")
+            if selfs_product:
+                queryset_list = Product.objects.all().filter(user=self.request.user)
+            else:
+                queryset_list = Product.objects.all().exclude(
+                    user=self.request.user)
         query = self.request.GET.get("q")
         if query:
             queryset_list = queryset_list.filter(
@@ -80,7 +83,7 @@ class ProductDetailAPIView(RetrieveAPIView):
 
 # Product UPDATE API
 @method_decorator(csrf_exempt, name='dispatch')
-class productUpdateAPIView(RetrieveUpdateAPIView):
+class ProductUpdateAPIView(RetrieveUpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductCreateSerializer
     permission_classes = [IsOwnerOrReadOnly]

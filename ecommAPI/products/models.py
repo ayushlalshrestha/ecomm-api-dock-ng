@@ -72,7 +72,7 @@ def pre_save_post_receiver(sender, instance, *args, **kwargs):
         instance.slug = create_slug(instance)
 
 
-# ------------------------  Images ------------------------------------------
+# ------------------------  Product Variation -------------------------
 
 class Variation(models.Model):
     product = models.ForeignKey(

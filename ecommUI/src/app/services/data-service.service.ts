@@ -16,6 +16,7 @@ import { ProductListData, getProductData } from '../models/products.interfaces';
 export class DataService {
   productSelected = new EventEmitter<Product>();
   baseURL = 'http://localhost:5050';
+// baseURL = '.';
 
   constructor(public http: HttpClient, private _snackBar: MatSnackBar) {
   }
@@ -32,55 +33,32 @@ export class DataService {
 
   }
   newProduct(data) {
-    var headers = new HttpHeaders();
-    headers.append('Content-Type', 'application/json');
+    var headers = new HttpHeaders().append('Content-Type', 'application/json'); // multipart/form-data 'application/x-www-form-urlencoded'
     return this.http.post(this.baseURL + '/products/create/', data, {
       withCredentials: true,
       headers: headers
     });
-
-    // const newProduct = new FormData();
-    // newProduct.append('title', data.title);
-    // newProduct.append('description', data.content);
-    // newProduct.append('tags', data.tags);
-
-    // if (data.image && data.image.name) {
-    //   newProduct.append('image', data.image, data.image.name);
-    // }
-
-    // return this.http.post(this.baseURL + '/products/create/', newProduct, {
-    //   withCredentials: true
-    // });
   }
   editProduct(data: any = null, extract = true) {
     const productID = data.productPK;
 
     if (extract) {
-      return this.http.get<Product>(this.baseURL + '/products/' + productID + '/update/', {
-        withCredentials: true
-      });
+        return this.http.get<Product>(this.baseURL + '/products/' + productID + '/update/', {
+            withCredentials: true
+        });
     } else {
-      const editedProduct = new FormData();
-      editedProduct.append('title', data.title);
-      editedProduct.append('description', data.content);
-      editedProduct.append('tags', data.tags);
-      // if (data.image && data.image.name) {
-      //   editedProduct.append('image', data.image, data.image.name);
-      // }
-
-      return this.http.put<Product>(this.baseURL + '/products/' + productID + '/update/', editedProduct, {
-        withCredentials: true
-      });
+        var headers = new HttpHeaders();
+        headers.append('Content-Type', 'application/json'); // application/x-www-form-urlencoded
+        return this.http.put<Product>(this.baseURL + '/products/' + productID + '/update/', data, {
+            withCredentials: true,
+            headers: headers
+        });
     }
   }
   getUsers() {
     return this.http.get<User[]>(this.baseURL + '/users/profiles/', { withCredentials: true });
   }
-  login(data) {
-    const headers = new HttpHeaders().set('content-type', 'application/json');
-    const formData = new FormData();
-    formData.append('username', data.username);
-    formData.append('password', data.password);
+  login(formData) {
     return this.http.post(this.baseURL + '/users/api-token-login/', formData);
   }
   getSessionDetails() {

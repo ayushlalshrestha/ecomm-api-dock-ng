@@ -13,10 +13,14 @@ from users.serializers import (
     UserListSerializer,
 )
 
+from drf_extra_fields.fields import Base64ImageField
+
 User = get_user_model()
 
 
 class VariationImageSerializer(ModelSerializer):
+    image = Base64ImageField()
+
     class Meta:
         model = VariationImage
         fields = ["pk", "image"]
@@ -24,9 +28,14 @@ class VariationImageSerializer(ModelSerializer):
     def get_image(self, obj):
         try:
             image = obj.image.url
-        except:
+        except Exception:
             image = None
         return image
+
+    def create(self, validated_data):
+        image = validated_data.pop('image')
+        variation = validated_data.pop('variation')
+        return VariationImage.objects.create(image=image, variation=variation)
 
 
 class VariationSerializer(ModelSerializer):
@@ -53,60 +62,60 @@ class ProductCreateSerializer(ModelSerializer):
         model = Product
         fields = ["title", "description", "tags", "publish", "variations"]
 
-    # def to_internal_value(self, data):
-    #     ret = super().to_internal_value(data)
-    #     if ret.get('tags'):
-    #         ret['tags'] = ret['tags'][0].split(",")
-
-    #     return ret
-
     def create(self, validated_data):
-        variations_data = validated_data.pop("variations")
+        log.info("Product - Create action")
+        variations_data = validated_data.pop("variations", [])
         product = Product.objects.create(**validated_data)
-        log.warning("Create method - product")
-        log.warning(validated_data)
-        log.warning(variations_data)
         for variation_data in variations_data:
-            images_data = variation_data.pop("images", [])
-            log.warning(f"Create - images_data is as : {images_data}")
+            images_data = variation_data.pop("variationimages", [])
             variation = Variation.objects.create(
                 product=product, **variation_data
             )
             for image in images_data:
-                VariationImage.objects.create(variation=variation, image=image)
+                image_data = {'variation': variation, 'image': image.get('image')}
+                # serializer = VariationImageSerializer(data=image_data)
+                # result = serializer.is_valid()
+                # log.warning(f"{result}, {serializer.errors}")
+                # if result:
+                #     serializer.save()
+                VariationImage.objects.create(**image_data)
 
         return product
 
-
-"""
     def update(self, instance, validated_data):
-        choices = validated_data.pop('choices')
-        instance.title = validated_data.get("title", instance.title)
+        log.warning("Ayush Ayush - Edit action")
+        variations = validated_data.pop("variations", [])
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.tags = validated_data.get('tags', instance.tags)
         instance.save()
-        keep_choices = []
-        for choice in choices:
-            if "id" in choice.keys():
-                if Choice.objects.filter(id=choice["id"]).exists():
-                    c = Choice.objects.get(id=choice["id"])
-                    c.text = choice.get('text', c.text)
-                    c.save()
-                    keep_choices.append(c.id)
+        keep_variations = []
+        for variation in variations:
+            keep_images = []
+            variation['product'] = instance
+            variation_images = variation.pop("images", [])
+            if "pk" in variation.keys():
+                if Variation.objects.filter(id=variation["pk"]).exists():
+                    v = Variation.objects.get(id=variation["pk"])
+                    v.title = v.get('title', v.title)
+                    v.description = v.get('v', v.description)
+                    v.price = v.get('price', v.price)
+                    v.sale_price = v.get('sale_price', v.sale_price)
+                    v.save()
+                    keep_variations.append(v.id)
                 else:
                     continue
             else:
-                c = Choice.objects.create(**choice, question=instance)
-                keep_choices.append(c.id)
-
-        for choice in instance.choices:
-            if choice.id not in keep_choices:
-                choice.delete()
+                v = Variation.objects.create(**variation)
+                keep_variations.append(v.id)
+        # for variation in instance.variation_set.all():
+        #     if variation.id not in keep_variations:
+        #         variation.delete()
 
         return instance
-"""
+
 
 # Product LIST serializer
-
-
 class ProductListSerializer(ModelSerializer):
     variations = VariationSerializer(many=True, required=False)
     user = UserListSerializer()

@@ -17,16 +17,15 @@ export class UsersSessionComponent implements OnInit {
   }
 
   onLogin(f: NgForm) {
-    const data = {
-      username: f.value.username,
-      password: f.value.password,
-    };
-    this.dataService.login(data).subscribe(
+    const formData = new FormData();
+    formData.append('username', f.value.username);
+    formData.append('password', f.value.password);
+    this.dataService.login(formData).subscribe(
       res => {
         if (res['success'] === true) {
           localStorage.setItem('jwt_token', res['token']);
           this.updateSessionDetails();
-          this.dataService.openSnackBar("Logged in as " + data.username);
+          this.dataService.openSnackBar("Logged in as " + f.value.username);
         } else if (res['error']) {
           this.dataService.openSnackBar("Login failed", false);
         }

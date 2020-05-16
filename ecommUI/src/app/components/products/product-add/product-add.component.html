@@ -39,7 +39,7 @@
                   <div [formGroupName]="ind">
                      <div>
                         <div class="form-group">
-                           <div *ngIf="field.formControl != 'images'; else fileInput">
+                           <div *ngIf="field.formControl != 'variationimages'; else fileInput">
                               <input [type]="field.type" class="form-control" [placeholder]="field.name"
                                  [formControlName]="field.formControl" />
                            </div>

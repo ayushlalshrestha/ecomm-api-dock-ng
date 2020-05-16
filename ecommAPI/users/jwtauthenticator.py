@@ -1,19 +1,19 @@
 
 import json
+import jwt
+import logging as log
 from users.models import User
 from rest_framework.authentication import get_authorization_header, BaseAuthentication
 from django.http import HttpResponse
 from rest_framework import status, exceptions
 from django.contrib import auth
 from django.http import JsonResponse, HttpResponse
-import jwt
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from rest_framework.views import APIView
 
 from ecommAPI.settings import SECRET_KEY
 
-import logging as log
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
@@ -36,32 +36,35 @@ class TokenAuthentication(BaseAuthentication):
                 raise exceptions.AuthenticationFailed(msg)
             elif len(auth) > 2:
                 msg = 'Invalid token header'
-                raise exceptions.AuthenticationFailed(msg)
-        except AuthenticationFailed as auth_ex:
-            return JsonResponse({
-                'success': False,
-                'message': 'Authentication Failed. {}'.format(msg)
-            })
+                # raise exceptions.AuthenticationFailed(msg)
+                return None
+        except Exception as auth_ex:  # AuthenticationFailed
+            log.error(f"Authenticate: {auth_ex}")
+            return None
 
         try:
             token = auth[1]
             if token == "null":
                 msg = 'Null token not allowed'
-                raise exceptions.AuthenticationFailed(msg)
+                # raise exceptions.AuthenticationFailed(msg)
+                return None
         except UnicodeError:
-            msg = 'Invalid token header. Token string should not contain invalid characters.'
-            raise exceptions.AuthenticationFailed(msg)
+            # raise exceptions.AuthenticationFailed(
+            #     'Invalid token header. Token string should not contain invalid characters.')
+            return None
+        except Exception as ex:
+            log.error(f"Invalid Header: {ex}")
+            return None
 
         return self.authenticate_credentials(token)
 
     def authenticate_credentials(self, token):
         payload = jwt.decode(token, SECRET_KEY)
-        """
-    	# Alternatively
-		# data = {'token': token}
-     	# valid_data = VerifyJSONWebTokenSerializer().validate(data)
-     	# user = valid_data['user']
-    	"""
+        # Alternatively
+        # data = {'token': token}
+        # valid_data = VerifyJSONWebTokenSerializer().validate(data)
+        # user = valid_data['user']
+        user = None
         model = self.get_model()
         email = payload['email']
         userid = payload['user_id']
@@ -75,9 +78,11 @@ class TokenAuthentication(BaseAuthentication):
             #     raise exceptions.AuthenticationFailed({'Error': "Token mismatch",'status' :"401"})
 
         except jwt.ExpiredSignature or jwt.DecodeError or jwt.InvalidTokenError:
-            return HttpResponse({'Error': "Token is invalid"}, status="403")
+            # return HttpResponse({'Error': "Token is invalid"}, status="403")
+            return None
         except User.DoesNotExist:
-            return HttpResponse({'Error': "Internal severe error"}, status="500")
+            # return HttpResponse({'Error': "Internal severe error"}, status="500")
+            return None
 
         return (user, token)
 
