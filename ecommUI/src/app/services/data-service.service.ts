@@ -40,7 +40,7 @@ export class DataService {
     });
   }
   editProduct(data: any = null, extract = true) {
-    const productID = data.productPK;
+    const productID = data.pk || data.productPK;
 
     if (extract) {
         return this.http.get<Product>(this.baseURL + '/products/' + productID + '/update/', {

@@ -1,12 +1,10 @@
 
-import { Component, OnInit, Inject, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Inject} from '@angular/core';
 
-import { MatDialogModule, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {  MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormGroup, FormControl, FormBuilder, FormArray, Validators } from '@angular/forms';
 
 import { DataService } from '../../../services/data-service.service';
-import { TagChipsComponent } from '../../../shared/tagchips/tagchips.component';
-import { Product } from '../../../models/product.models';
 
 export class ImageUploadModel {
     Title: string;
@@ -70,32 +68,53 @@ export class ProductAddComponent implements OnInit {
         this.variationsForm = this.fb.group({
             variations: this.fb.array([this.addVariationDetails()])
         });
-
         if (this.data && this.data.edit == true && this.data.productPK) {
             this.editAction = true;
             this.dataService.editProduct(this.data, true).subscribe(
                 product => {
-                    this.productForm.setValue({
-                        title: product.title,
-                        description: product.description,
-                        tags: product.tags || ['']
-                    });
+                    this.pushProductToForm(product);
+                    if (product.variations){
+                        this.pushVariationsToForm(product.variations);
+                    }
                     this.productPK = this.data.productPK;
                     this.tags = product.tags || ['defaultWala'];
+                },
+                err => {
+                    this.dataService.openSnackBar("Could not extract Product Details");
+                    this.dialogRef.close();
                 }
+
             )
         } else {
             this.editAction = false;
         }
 
     }
-
+    pushProductToForm(product){
+        this.productForm.setValue({
+            title: product.title,
+            description: product.description,
+            tags: product.tags || ['']
+        });
+    }
+    pushVariationsToForm(variations){
+        var variationsToPush = [];
+        variations.forEach(variation => {
+            variationsToPush.push(
+                this.addVariationToFormArray(variation)
+            );
+        });
+        this.variationsForm = this.fb.group({
+            variations: this.fb.array(variationsToPush)
+        });
+    }
     onSubmit() {
         var values = this.productForm.value;
-        var productVariation = this.variationsForm.value.variations;
-        productVariation.forEach(variation => {
+        var productVariations = JSON.parse(JSON.stringify(this.variationsForm.value.variations));
+        productVariations.forEach(variation => {
             var images = variation['variationimages'];
             delete variation['variationimages'];
+            console.log(images);
             variation['variationimages'] = images.map(elem => { return { 'image': elem } });
         })
         var data = {
@@ -103,9 +122,8 @@ export class ProductAddComponent implements OnInit {
             'description': values.description,
             'tags': values.tags,
             'publish': new Date().toISOString().slice(0, 10),
-            'variations': productVariation
+            'variations': productVariations
         }
-        console.log(data);
         if (!this.editAction) {
             this.dataService.newProduct(data).subscribe(
                 res => {
@@ -116,7 +134,8 @@ export class ProductAddComponent implements OnInit {
                 }
             );
         } else {
-            data['productPK'] = this.productPK;
+            data['pk'] = this.productPK;
+            console.log(data);
             this.dataService.editProduct(data, false).subscribe(
                 res => {
                     this.dialogRef.close();
@@ -135,8 +154,32 @@ export class ProductAddComponent implements OnInit {
         });
         return variationDetailsFormGroup;
     }
-    addVariationToFormArray() {
+    addNewVariationToFormArray(){
         this.variationRows.push(this.addVariationDetails());
+    }
+    addVariationToFormArray(variation) {
+        var variationGroup = this.addVariationDetails();
+        variationGroup.addControl("pk", this.fb.control([]));
+        if (variation.variationimages && variation.variationimages[0]){
+            var images = [];
+            this.dataService.getImage(variation.variationimages[0].image).subscribe(blobImage => {
+                // images.push(this.createImageFromBlob(blobImage)); // var file = new File([blobImage], "sample.jpg");
+                let reader = new FileReader();
+                reader.addEventListener("load", () => {
+                    images.push(reader.result);
+                }, false);                
+                reader.readAsDataURL(blobImage);
+            });
+        }
+        variationGroup.setValue({
+            pk: variation.pk,
+            title: variation.title,
+            description: variation.description,
+            price: variation.price,
+            sale_price: variation.sale_price || variation.price,
+            variationimages: images
+        });
+        return variationGroup;
     }
     removeVariation(event, index) {
         if (this.variationRows.value.length == 1) {
@@ -172,10 +215,13 @@ export class ProductAddComponent implements OnInit {
     createImageFromBlob(image: Blob) {
         let reader = new FileReader();
         reader.addEventListener("load", () => {
-            let imageToShow = reader.result;
+            return reader.result;
         }, false);
 
         if (image) {
+            reader.onload = function(){
+                return reader.result;
+            }
             reader.readAsDataURL(image);
         }
     }

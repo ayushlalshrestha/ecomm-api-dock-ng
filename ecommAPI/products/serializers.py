@@ -2,7 +2,7 @@ import logging as log
 from rest_framework.serializers import (
     HyperlinkedIdentityField,
     SerializerMethodField,
-    ModelSerializer,
+    ModelSerializer
 )
 
 from django.contrib.auth import get_user_model
@@ -50,8 +50,15 @@ class VariationSerializer(ModelSerializer):
             "price",
             "sale_price",
             "available",
-            "variationimages",
+            "variationimages"
         ]
+        extra_kwargs = {
+            "pk": {
+                "read_only": False,
+                "required": False
+            },
+            'title': {'validators': []},
+        }
 
 
 # Product CREATE/UPDATE serializer
@@ -75,15 +82,13 @@ class ProductCreateSerializer(ModelSerializer):
                 image_data = {'variation': variation, 'image': image.get('image')}
                 # serializer = VariationImageSerializer(data=image_data)
                 # result = serializer.is_valid()
-                # log.warning(f"{result}, {serializer.errors}")
-                # if result:
                 #     serializer.save()
                 VariationImage.objects.create(**image_data)
 
         return product
 
     def update(self, instance, validated_data):
-        log.warning("Ayush Ayush - Edit action")
+        log.warning(f"Ayush Ayush - Edit action - {instance}")
         variations = validated_data.pop("variations", [])
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
@@ -91,22 +96,27 @@ class ProductCreateSerializer(ModelSerializer):
         instance.save()
         keep_variations = []
         for variation in variations:
+            # log.warning(variation)
             keep_images = []
             variation['product'] = instance
             variation_images = variation.pop("images", [])
             if "pk" in variation.keys():
                 if Variation.objects.filter(id=variation["pk"]).exists():
                     v = Variation.objects.get(id=variation["pk"])
-                    v.title = v.get('title', v.title)
-                    v.description = v.get('v', v.description)
-                    v.price = v.get('price', v.price)
-                    v.sale_price = v.get('sale_price', v.sale_price)
+                    v.title = variation.get('title', v.title)
+                    v.description = variation.get('v', v.description)
+                    v.price = variation.get('price', v.price)
+                    v.sale_price = variation.get('sale_price', v.sale_price)
                     v.save()
                     keep_variations.append(v.id)
                 else:
                     continue
             else:
-                v = Variation.objects.create(**variation)
+                images_data = variation.pop("variationimages", [])
+                variation = Variation.objects.create(**variation)
+                for image in images_data:
+                    image_data = {'variation': variation, 'image': image.get('image')}
+                    VariationImage.objects.create(**image_data)
                 keep_variations.append(v.id)
         # for variation in instance.variation_set.all():
         #     if variation.id not in keep_variations:
