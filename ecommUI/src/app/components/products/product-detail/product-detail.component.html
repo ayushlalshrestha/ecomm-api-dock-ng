@@ -1,30 +1,61 @@
-<div mat-dialog-title>
-  <h4>{{product.title}}</h4>
-  <div class="chip" *ngFor="let tag of product.tags">
-    {{tag}}
-  </div>
-</div>
-<div mat-dialog-content>
-
-  <div class="row" style="color: #6f6f6f">
-    <div> by {{ product.user.username }} at {{product.user.profile.company}} </div> &nbsp;
-    <div *ngIf="product && product.variations && product.variations[0].price != null">
-      <div> - {{product.variations[0].price}}  <i class="fa fa-dollar" aria-hidden="true"></i> </div>
+<div *ngIf="isLoaded; else loading">
+    <div mat-dialog-title>
+        <h4>{{product.title}} </h4>
+        <div class="chip" *ngFor="let tag of product.tags">
+            {{tag}}
+        </div>
     </div>
-  </div>
 
-  <div *ngIf="product && product.variations && product.variations[0].variationimages != []">
-    <img class="materialboxed" width='700' src={{product.variations[0].variationimages[0].image}}>
-    <!-- <img class="responsive-img product-title-image" src={{product.variations[0].variationimages[0].image}}> -->
-  </div>
+    <div mat-dialog-content>
+        <div class="row" style="color: #6f6f6f">
+            <div> by {{ product.sold_by }} </div> &nbsp;
+            <div *ngIf="product.price">
+                <div> - {{product.price}}<i class="fa fa-dollar" aria-hidden="true"></i></div>
+            </div>
+        </div>
 
-  <div class="row product-description" style="margin-top: 10px;">
-    <div>
-      {{ product.description }}
+        <div *ngIf="product && product.image">
+            <img class="materialboxed" width='700' src={{product.image}}>
+            <!-- <img class="responsive-img product-title-image" src={{product.variations[0].variationimages[0].image}}> -->
+        </div>
+
+        <!-- <div class="carousel">
+            <a class="carousel-item" href="#{{hrefs[i]}}!" *ngFor="let item of items;let i = index; let last = last">
+                <img src={{item}} />
+            </a>
+        </div> -->
+
+        <div class="row product-description" style="margin-top: 10px;">
+            <div>
+                {{ product.description }}
+            </div>
+        </div>
+
+        <h5>Variations</h5>
+        <mat-accordion>
+            <!-- <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false"> -->
+            <mat-expansion-panel *ngFor="let variation of product.variations">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        {{ variation.title }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{ variation.price }}
+                        <!-- Currently I am {{panelOpenState ? 'open' : 'closed'}} -->
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <b>Description</b>
+                <p>{{ variation.description }}</p>
+                <b>Original Price:</b> {{variation.price}}
+                <div *ngIf="variation.sale_price && variation.sale_price != variation.price">
+                    <b>Sale-Price:</b> {{variation.sale_price}}
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+
     </div>
-  </div>
-  
+    <div mat-dialog-actions>
+        <button mat-button [mat-dialog-close]="product.pk">Done</button>
+    </div>
 </div>
-<div mat-dialog-actions>
-  <button mat-button [mat-dialog-close]="product.pk">Done</button>
-</div>
+<ng-template #loading>Loading.. . .</ng-template>

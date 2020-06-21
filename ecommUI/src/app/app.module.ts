@@ -7,10 +7,10 @@ import {
   MatButtonModule, MatFormFieldModule, MatInputModule, MatRippleModule,
   MatCardModule, MatProgressSpinnerModule, MatMenuModule, MatIconModule,
   MatTableModule, MatCheckboxModule, MatToolbarModule, MatSnackBarModule,
-  MatSelectModule, MatSortModule, MatPaginatorModule, MatCheckbox,
-  MatChipsModule, MatAutocompleteModule
+  MatSelectModule, MatSortModule, MatPaginatorModule, MatCheckbox, MatExpansionModule,
+  MatChipsModule, MatAutocompleteModule, MatGridListModule
 } from '@angular/material';
-
+// import {MatGridListModule} from '@angular/material/grid-list';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { NgModule } from '@angular/core';
@@ -25,9 +25,9 @@ import { MyHttpInterceptor } from './services/auth.interceptor';
 import { ProductsComponent } from './components/products/products.component';
 
 import { ProductsListComponent } from './components/products/products-list/products-list.component';
+import { ProductsGridViewComponent } from './components/products/products-list/products-grid-view.component';
 import { ProductDetailComponent } from './components/products/product-detail/product-detail.component';
 import { ProductAddComponent } from './components/products/product-add/product-add.component';
-
 
 import { UserComponent } from './components/user/user.component';
 import { UsersProductsComponent } from './components/usersproducts/usersproducts.component';
@@ -49,7 +49,7 @@ const appRoutes: Routes = [
     AppComponent, ProductsComponent, UsersProductsComponent,
     ProductAddComponent, ProductDetailComponent,
     ProductsListComponent, UsersProductsListComponent,
-    UsersSessionComponent, UserComponent,
+    ProductsGridViewComponent, UsersSessionComponent, UserComponent,
     ShortMessageComponent,
     TagChipsComponent
   ],
@@ -65,6 +65,8 @@ const appRoutes: Routes = [
     MatDialogModule,
     MatRippleModule,
     MatCardModule,
+    MatGridListModule,
+    MatExpansionModule,
     MatProgressSpinnerModule,
     MatMenuModule,
     MatIconModule,

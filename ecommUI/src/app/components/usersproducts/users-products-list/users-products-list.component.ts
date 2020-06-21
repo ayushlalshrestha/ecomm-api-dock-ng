@@ -7,7 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 
 import { DataService } from '../../../services/data-service.service';
-import { ProductListData, getProductData } from '../../../models/products.interfaces';
+import { ProductListData, getProductsData } from '../../../models/products.interfaces';
 import { ProductDetailComponent } from '../../products/product-detail/product-detail.component';
 import { ProductAddComponent } from '../../products/product-add/product-add.component';
 
@@ -49,7 +49,7 @@ export class UsersProductsListComponent implements OnInit {
     this.dataService.getUsersProducts().subscribe(
       products => {
         var products = products['results'];
-        this.usersProductsDataList = getProductData(products);
+        this.usersProductsDataList = getProductsData(products);
         this.dataSource = new MatTableDataSource(this.usersProductsDataList);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;

@@ -8,15 +8,11 @@ import { MatSnackBar } from '@angular/material';
 
 import { Product } from '../models/product.models';
 import { User } from '../models/user-profile.models';
-import { Observable } from 'rxjs';
-import { ResponseContentType, RequestOptions } from '@angular/http';
-import { ProductListData, getProductData } from '../models/products.interfaces';
 
 @Injectable()
 export class DataService {
   productSelected = new EventEmitter<Product>();
-  baseURL = 'http://localhost:5050';
-// baseURL = '.';
+  baseURL = 'http://localhost:5050';  // baseURL = '.';
 
   constructor(public http: HttpClient, private _snackBar: MatSnackBar) {
   }

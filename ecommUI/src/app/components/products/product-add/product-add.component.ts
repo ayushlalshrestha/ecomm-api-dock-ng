@@ -114,7 +114,6 @@ export class ProductAddComponent implements OnInit {
         productVariations.forEach(variation => {
             var images = variation['variationimages'];
             delete variation['variationimages'];
-            console.log(images);
             variation['variationimages'] = images.map(elem => { return { 'image': elem } });
         })
         var data = {
@@ -124,6 +123,8 @@ export class ProductAddComponent implements OnInit {
             'publish': new Date().toISOString().slice(0, 10),
             'variations': productVariations
         }
+        console.log(data);
+        // return; 
         if (!this.editAction) {
             this.dataService.newProduct(data).subscribe(
                 res => {
@@ -135,7 +136,6 @@ export class ProductAddComponent implements OnInit {
             );
         } else {
             data['pk'] = this.productPK;
-            console.log(data);
             this.dataService.editProduct(data, false).subscribe(
                 res => {
                     this.dialogRef.close();
@@ -160,16 +160,19 @@ export class ProductAddComponent implements OnInit {
     addVariationToFormArray(variation) {
         var variationGroup = this.addVariationDetails();
         variationGroup.addControl("pk", this.fb.control([]));
-        if (variation.variationimages && variation.variationimages[0]){
-            var images = [];
-            this.dataService.getImage(variation.variationimages[0].image).subscribe(blobImage => {
-                // images.push(this.createImageFromBlob(blobImage)); // var file = new File([blobImage], "sample.jpg");
-                let reader = new FileReader();
-                reader.addEventListener("load", () => {
-                    images.push(reader.result);
-                }, false);                
-                reader.readAsDataURL(blobImage);
-            });
+        var images = [];
+        if (variation.variationimages && variation.variationimages.length > 0) {
+            var allVariationImages = variation.variationimages;
+            for (var i=0; i < allVariationImages.length; i++) {
+                this.dataService.getImage(allVariationImages[i].image).subscribe(blobImage => {
+                    // images.push(this.createImageFromBlob(blobImage)); // var file = new File([blobImage], "sample.jpg");
+                    let reader = new FileReader();
+                    reader.addEventListener("load", () => {
+                        images.push(reader.result);
+                    }, false);
+                    reader.readAsDataURL(blobImage);
+                });
+            }
         }
         variationGroup.setValue({
             pk: variation.pk,
@@ -179,6 +182,7 @@ export class ProductAddComponent implements OnInit {
             sale_price: variation.sale_price || variation.price,
             variationimages: images
         });
+        console.log(variationGroup.value);
         return variationGroup;
     }
     removeVariation(event, index) {
@@ -194,23 +198,27 @@ export class ProductAddComponent implements OnInit {
         this.dialogRef.close();
     }
     onImageChanged(event, index) {
-        // files.forEach(file => {
-        //   if (file.size / (1024 * 1024) > 3) {
-        //     this.dataService.openSnackBar("Image "+ file.name + " larger than 3 MB");
-        //     return;
-        //   }
-        // });
-        const file = event.target.files[0];
-        var file_obj = new ImageUploadModel();
-        file_obj.ImageType = file.type.split('/')[1];
-        file_obj.Title = file.name;
+        const files = event.target.files;
+        var images = [];
+        for (var i = 0; i < files.length ; i++) {
+            var file = files[i];
+            if (file.size / (1024 * 1024) > 3) {
+                this.dataService.openSnackBar("Image "+ file.name + " larger than 3 MB");
+                return;
+            }
+            var file_obj = new ImageUploadModel();
+            file_obj.ImageType = file.type.split('/')[1];
+            file_obj.Title = file.name;
 
-        const myReader: FileReader = new FileReader();
-        myReader.onloadend = (e) => {
-            file_obj.Base64String = myReader.result.toString();
-            this.variationRows.value[index].variationimages = [JSON.stringify(file_obj),];
-        };
-        myReader.readAsDataURL(file);
+            var reader: FileReader = new FileReader();
+            // reader.onloadend = (e) => { ... };
+            reader.addEventListener("load", () => {
+                file_obj.Base64String = reader.result.toString();
+                images.push(JSON.stringify(file_obj));
+            }, false);
+            reader.readAsDataURL(file);
+        }
+        this.variationRows.value[index].variationimages = images;
     }
     createImageFromBlob(image: Blob) {
         let reader = new FileReader();

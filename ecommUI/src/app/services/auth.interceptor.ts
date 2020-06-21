@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent, HttpHeaders, HttpXsrfTokenExtractor } from '@angular/common/http';
+import { HttpInterceptor, HttpHandler, HttpRequest, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-import { CookieXSRFStrategy } from '@angular/http';
 
 @Injectable()
 export class MyHttpInterceptor implements HttpInterceptor {
@@ -14,10 +12,8 @@ export class MyHttpInterceptor implements HttpInterceptor {
         const idToken = localStorage.getItem("jwt_token");
         
         if (idToken) {
-            // const headers = new HttpHeaders().set('X-CSRFToken', '8ipjC3UCLyakUNp1t9C3ZeiQVtzBH2NerMY0ayMnb6qxCpY9gvXOrP3JrouFThWp');
             const newHeader = {headers: req.headers.set("Authorization", "Token " + idToken)}
             const cloned = req.clone(newHeader);
-
             return next.handle(cloned);
         }
         else {

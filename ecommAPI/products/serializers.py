@@ -88,7 +88,6 @@ class ProductCreateSerializer(ModelSerializer):
         return product
 
     def update(self, instance, validated_data):
-        log.warning(f"Ayush Ayush - Edit action - {instance}")
         variations = validated_data.pop("variations", [])
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
@@ -96,15 +95,14 @@ class ProductCreateSerializer(ModelSerializer):
         instance.save()
         keep_variations = []
         for variation in variations:
-            # log.warning(variation)
             keep_images = []
             variation['product'] = instance
-            variation_images = variation.pop("images", [])
+            images_data = variation.pop("variationimages", [])
             if "pk" in variation.keys():
                 if Variation.objects.filter(id=variation["pk"]).exists():
                     v = Variation.objects.get(id=variation["pk"])
                     v.title = variation.get('title', v.title)
-                    v.description = variation.get('v', v.description)
+                    v.description = variation.get('description', v.description)
                     v.price = variation.get('price', v.price)
                     v.sale_price = variation.get('sale_price', v.sale_price)
                     v.save()
@@ -112,15 +110,16 @@ class ProductCreateSerializer(ModelSerializer):
                 else:
                     continue
             else:
-                images_data = variation.pop("variationimages", [])
-                variation = Variation.objects.create(**variation)
-                for image in images_data:
-                    image_data = {'variation': variation, 'image': image.get('image')}
-                    VariationImage.objects.create(**image_data)
+                v = Variation.objects.create(**variation)
                 keep_variations.append(v.id)
-        # for variation in instance.variation_set.all():
-        #     if variation.id not in keep_variations:
-        #         variation.delete()
+
+            VariationImage.objects.filter(variation=v).delete()
+            for image in images_data:
+                image_data = {'variation': v, 'image': image.get('image')}
+                VariationImage.objects.create(**image_data)
+        for variation in Variation.objects.filter(product=instance):
+            if variation.id not in keep_variations:
+                variation.delete()
 
         return instance
 
@@ -133,6 +132,11 @@ class ProductListSerializer(ModelSerializer):
     class Meta:
         model = Product
         fields = ["pk", "title", "description", "tags", "variations", "user"]
+
+    def get_description(self, obj):
+        log.warning(f"Product Description: {obj.description}")
+
+        return obj.description.split('.', 1)[0].split('\n', 1)[0]
 
 
 # Product DETAIL serializer
