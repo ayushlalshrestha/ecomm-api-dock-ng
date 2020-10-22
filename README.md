@@ -1,17 +1,17 @@
 # This application serves the purpose of:
- 1. Buying products (duh, another ecommerce app (cwl))
- 2. Upload your products, sell it (as if someone's gonna buy it (cwl))
+ 1. Buying products (duh, another ecommerce app 😂)
+ 2. Upload your products, sell it (as if someone's gonna buy it 😂)
  
  Anyways enjoy!!
 
 ## Ecommerce app, to be dockerized with 3 main containers (for now :P ):
-    1. API engine, hosting the backend webserver to handle http requests
+    1. API engine, hosting the backend webserver to handle http requests, in Django DRF
     2. postgre sql server, for database purpose
     3. UI engine, for User Interface served by angular 5
 
 # Build images for all 3 engines:
     1. cd into respective apps, eg. APIEngine
-    2. run: `docker build . -t apiengine
+    2. run: `docker build . -t apiengine`
     3. repeat the same for uiengine and postgres
 
 
